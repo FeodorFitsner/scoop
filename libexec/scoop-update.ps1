@@ -22,6 +22,9 @@
 
 reset_aliases
 
+$update_restart = [int]$env:SCOOP__updateRestart
+$args_initial = $args
+
 $opt, $apps, $err = getopt $args 'gfkq' 'global','force', 'no-cache', 'quiet'
 if($err) { "scoop update: $err"; exit 1 }
 $global = $opt.g -or $opt.global
@@ -34,8 +37,11 @@ function update_scoop() {
     $git = try { gcm git -ea stop } catch { $null }
     if(!$git) { abort "scoop uses git to update itself. run 'scoop install git'." }
 
+    $update_commit_target = 'FETCH_HEAD'  # or, for a complete reset, use "origin/HEAD"
+
     "updating scoop..."
     $currentdir = fullpath $(versiondir 'scoop' 'current')
+    $hash_original = ""
     if(!(test-path "$currentdir\.git")) {
         # load config
         $repo = $(scoop config SCOOP_REPO)
@@ -58,17 +64,36 @@ function update_scoop() {
     }
     else {
         pushd $currentdir
-        git pull -q
+        $hash_original = git describe --all --long
+        git fetch --quiet
+        git reset --quiet --hard $update_commit_target
+        git clean -fd
         popd
     }
+    pushd $currentdir
+    $hash_new = git describe --all --long
+    popd
+    if ( $hash_new -ne $hash_original ) {
+        $max_restarts = 1
+        if ( $update_restart -gt $max_restarts ) {
+            warn "scoop code was changed, please re-run 'scoop update'"
+        }
+        else {
+            write-host "scoop code was changed, restarting update..."
+            & "$psscriptroot\..\bin\scoop.ps1" update -__updateRestart $($update_restart + 1) $args_initial
+            exit $lastExitCode
+        }
+    }
 
-    ensure_scoop_in_path
+    ensure_scoop_in_path $false
     shim "$currentdir\bin\scoop.ps1" $false
 
     @(buckets) | % {
         "updating $_ bucket..."
         pushd (bucketdir $_)
-        git pull -q
+        git fetch --quiet
+        git reset --quiet --hard $update_commit_target
+        git clean -fd
         popd
     }
     success 'scoop was updated successfully!'
