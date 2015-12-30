@@ -1,4 +1,4 @@
-Scoop [![Build status](https://ci.appveyor.com/api/projects/status/jgckhkhe5rdd6586/branch/master?svg=true)](https://ci.appveyor.com/project/rivy/scoop/branch/master)
+Scoop [![Build status](https://ci.appveyor.com/api/projects/status/jgckhkhe5rdd6586/branch/t-fix?svg=true)](https://ci.appveyor.com/project/rivy/scoop/branch/t-fix)
 =====
 
 Scoop is a command-line installer for Windows.
@@ -8,9 +8,16 @@ Requirements:
 * [PowerShell 3](http://www.microsoft.com/en-us/download/details.aspx?id=34595)
 * PowerShell must be enabled for your user account e.g. `set-executionpolicy unrestricted -s cu`
 
-To install:
+To install (for the CMD shell):
 
-    iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
+    powershell -ex unrestricted -command "set-executionpolicy unrestricted -s currentuser"
+    powershell -command "'https://raw.github.com/rivy/scoop/t-fix/bin/install.ps1' |%{&$([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin $_}"
+    set PATH=%PATH%;%LOCALAPPDATA%\scoop\shims
+
+To install (for PowerShell):
+
+    set-executionpolicy unrestricted -s cu
+    'https://raw.github.com/rivy/scoop/t-fix/bin/install.ps1' |%{&$([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin $_}
 
 Once installed, run `scoop help` for instructions.
 
