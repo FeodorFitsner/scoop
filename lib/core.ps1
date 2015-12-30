@@ -94,7 +94,7 @@ function env { param($name,$value,$targetEnvironment)
 }
 function unzip($path,$to) {
     if(!(test-path $path)) { abort "can't find $path to unzip"}
-    try { add-type -assembly "System.IO.Compression.FileSystem" -ea stop }
+    try { add-type -assembly "System.IO.Compression.FileSystem" -ErrorAction stop }
     catch { unzip_old $path $to; return } # for .net earlier than 4.5
     try {
         [io.compression.zipfile]::extracttodirectory($path,$to)
@@ -184,7 +184,7 @@ function shim_scoop_cmd_code($shim_cmd_path, $path, $arg) {
     # * additional code needed to pipe environment variables back up and into to the original calling CMD process (see shim_scoop_cmd_code_body())
 
     # swallow errors for the case of non-existent CMD shim (eg, during initial installation)
-    $CMD_shim_fullpath = resolve-path $shim_cmd_path -ea SilentlyContinue
+    $CMD_shim_fullpath = resolve-path $shim_cmd_path -ErrorAction SilentlyContinue
     $CMD_shim_content = $null
     if ($CMD_shim_fullpath) {
         $CMD_shim_content = Get-Content $CMD_shim_fullpath
@@ -359,7 +359,7 @@ function ensure_scoop_in_path($global) {
 }
 
 function ensure_robocopy_in_path {
-    if(!(get-command robocopy -ea ignore)) {
+    if(!(get-command robocopy -ErrorAction SilentlyContinue)) {
         shim "C:\Windows\System32\Robocopy.exe" $false
     }
 }
@@ -403,7 +403,7 @@ $default_aliases = @{
 }
 
 function reset_alias($name, $value) {
-    if($existing = get-alias $name -ea ignore | where-object { $_.options -match 'readonly' }) {
+    if($existing = get-alias $name -ErrorAction SilentlyContinue | where-object { $_.options -match 'readonly' }) {
         if($existing.definition -ne $value) {
             write-host "alias $name is read-only; can't reset it" -f darkyellow
         }

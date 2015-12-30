@@ -8,9 +8,16 @@ Requirements:
 * [PowerShell 3](http://www.microsoft.com/en-us/download/details.aspx?id=34595)
 * PowerShell must be enabled for your user account e.g. `set-executionpolicy unrestricted -s cu`
 
-To install:
+To install (for CMD):
 
-    iex (new-object net.webclient).downloadstring('https://get.scoop.sh')
+    powershell -ex unrestricted -command "set-executionpolicy unrestricted -s currentuser"
+    powershell -command "'https://raw.github.com/rivy/scoop/t-fix/bin/install.ps1' |%{& $([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin ^"$_^"}"
+    * RESTART CMD shell (this will be the only shell restart needed)
+
+To install (for PowerShell):
+
+    set-executionpolicy unrestricted -s cu
+    'https://raw.github.com/rivy/scoop/t-fix/bin/install.ps1' |%{& $([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin "$_"}
 
 Once installed, run `scoop help` for instructions.
 
