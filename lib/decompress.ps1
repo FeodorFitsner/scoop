@@ -1,9 +1,10 @@
 function sevenzip_installed { cmd_available '7z' }
 
 function requires_7zip($manifest, $architecture) {
-    foreach($dlurl in @(url $manifest $architecture)) {
+    $urls = @(url $manifest $architecture)
+    if ($null -ne $urls) { foreach ($dlurl in $urls) {
         if(file_requires_7zip $dlurl) { return $true }
-    }
+    }}
 }
 
 function file_requires_7zip($fname) {
@@ -11,7 +12,7 @@ function file_requires_7zip($fname) {
 }
 
 function extract_7zip($path, $to, $recurse) {
-    $null = 7z x "$path" -o"$to" -y
+    $null = & "7z" x "$path" -o"$to" -y
     if($lastexitcode -ne 0) { abort "exit code was $lastexitcode" }
 
     # check for tar

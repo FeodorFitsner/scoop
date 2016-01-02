@@ -10,15 +10,16 @@
 #   --force, -f     force update even when there isn't a newer version
 #   --no-cache, -k  don't use the download cache
 #   --quiet, -q     hide extraneous messages
-. "$psscriptroot\..\lib\core.ps1"
-. "$psscriptroot\..\lib\install.ps1"
-. "$psscriptroot\..\lib\decompress.ps1"
-. "$psscriptroot\..\lib\manifest.ps1"
-. "$psscriptroot\..\lib\buckets.ps1"
-. "$psscriptroot\..\lib\versions.ps1"
-. "$psscriptroot\..\lib\getopt.ps1"
-. "$psscriptroot\..\lib\depends.ps1"
-. "$psscriptroot\..\lib\config.ps1"
+
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\core.ps1"
+. $(rootrelpath "lib\install.ps1")
+. $(rootrelpath "lib\decompress.ps1")
+. $(rootrelpath "lib\manifest.ps1")
+. $(rootrelpath "lib\buckets.ps1")
+. $(rootrelpath "lib\versions.ps1")
+. $(rootrelpath "lib\getopt.ps1")
+. $(rootrelpath "lib\depends.ps1")
+. $(rootrelpath "lib\config.ps1")
 
 reset_aliases
 
@@ -80,7 +81,7 @@ function update_scoop() {
         }
         else {
             write-host "scoop code was changed, restarting update..."
-            & "$psscriptroot\..\bin\scoop.ps1" update -__updateRestart $($update_restart + 1) $args_initial
+            & $(rootrelpath "bin\scoop.ps1") update -__updateRestart $($update_restart + 1) $args_initial
             exit $lastExitCode
         }
     }

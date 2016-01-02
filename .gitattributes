@@ -3,3 +3,6 @@
 #
 *.exe -text
 *.zip -text
+
+# treat third-party tools directory as binary
+tools/**  binary

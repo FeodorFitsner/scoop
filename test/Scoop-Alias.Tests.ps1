@@ -1,4 +1,4 @@
-. "$psscriptroot\..\libexec\scoop-alias.ps1" | out-null
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\libexec\scoop-alias.ps1" | out-null
 
 reset_aliases
 

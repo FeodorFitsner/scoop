@@ -4,12 +4,13 @@
 #
 # Options:
 #   -g, --global   uninstall a globally installed app
-. "$psscriptroot\..\lib\core.ps1"
-. "$psscriptroot\..\lib\manifest.ps1"
-. "$psscriptroot\..\lib\help.ps1"
-. "$psscriptroot\..\lib\install.ps1"
-. "$psscriptroot\..\lib\versions.ps1"
-. "$psscriptroot\..\lib\getopt.ps1"
+
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\core.ps1"
+. $(rootrelpath "lib\manifest.ps1")
+. $(rootrelpath "lib\help.ps1")
+. $(rootrelpath "lib\install.ps1")
+. $(rootrelpath "lib\versions.ps1")
+. $(rootrelpath "lib\getopt.ps1")
 
 reset_aliases
 
@@ -37,7 +38,7 @@ if($global -and !(is_admin)) {
     'ERROR: you need admin rights to uninstall global apps'; exit 1
 }
 if($app -eq 'scoop') {
-    & "$psscriptroot\..\bin\uninstall.ps1" $global; exit
+    & $(rootrelpath "bin\uninstall.ps1") $global; exit
 }
 
 $version = current_version $app $global
@@ -65,12 +66,12 @@ catch { abort "couldn't remove $(friendly_path $dir): it may be in use" }
 
 # remove older versions
 $old = @(versions $app $global)
-foreach($oldver in $old) {
+if ($null -ne $old) { foreach ($oldver in $old) {
     "removing older version, $oldver"
     $dir = versiondir $app $oldver $global
     try { remove-item -r -force -ea stop $dir }
     catch { abort "couldn't remove $(friendly_path $dir): it may be in use" }
-}
+}}
 
 if(@(versions $app).length -eq 0) {
     $appdir = appdir $app $global

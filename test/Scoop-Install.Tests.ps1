@@ -1,6 +1,6 @@
-. "$psscriptroot\Scoop-TestLib.ps1"
-. "$psscriptroot\..\lib\core.ps1"
-. "$psscriptroot\..\lib\install.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path)\Scoop-TestLib.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\core.ps1"
+. $(rootrelpath "lib\install.ps1")
 
 describe "travel_dir" {
     beforeall {

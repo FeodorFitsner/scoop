@@ -28,8 +28,8 @@
 
 param($name, $value)
 
-. "$psscriptroot\..\lib\config.ps1"
-. "$psscriptroot\..\lib\help.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\config.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\help.ps1"
 
 reset_aliases
 

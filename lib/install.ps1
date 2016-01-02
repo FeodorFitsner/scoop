@@ -178,8 +178,9 @@ function dl_urls($app, $version, $manifest, $architecture, $dir, $use_cache = $t
     $extract_tos = @(extract_to $manifest $architecture)
     $extracted = 0;
 
-    foreach($url in $urls) {
-        $fname = split-path $url -leaf
+    if ($null -ne $urls) { foreach ($url in $urls) {
+        # NOTE: url fragment identifiers are used to specify download file type for extraction
+        $fname = split-path $(([System.URI]$url).LocalPath + ([System.URI]$url).Fragment) -leaf
 
         dl_with_cache $app $version $url "$dir\$fname" $cookies $use_cache
 
@@ -240,7 +241,7 @@ function dl_urls($app, $version, $manifest, $architecture, $dir, $use_cache = $t
 
             $extracted++
         }
-    }
+    }}
 
     $fname # returns the last downloaded file
 }
@@ -311,7 +312,7 @@ function compute_hash($file, $algname) {
         [string]::join('', $hexbytes)
     } finally {
         $fs.dispose()
-        $alg.dispose()
+        #$alg.dispose()
     }
 }
 
@@ -391,7 +392,7 @@ function install_msi($fname, $dir, $msi) {
     if($msi.silent) { $arg += '/qn', 'ALLUSERS=2', 'MSIINSTALLPERUSER=1' }
     else { $arg += '/qb-!' }
 
-    $continue_exit_codes = @{ 3010 = "a restart is required to complete installation" }
+    $continue_exit_codes = @{ '3010' = "a restart is required to complete installation" }
 
     $installed = run 'msiexec' $arg "running installer..." $continue_exit_codes
     if(!$installed) {
@@ -457,8 +458,8 @@ function run_uninstaller($manifest, $architecture, $dir) {
                 $arg += '/qb-!'
             }
 
-            $continue_exit_codes.1605 = 'not installed, skipping'
-            $continue_exit_codes.3010 = 'restart required'
+            $continue_exit_codes.'1605' = 'not installed, skipping'
+            $continue_exit_codes.'3010' = 'restart required'
         } elseif($uninstaller) {
             $exe = "$dir\$($uninstaller.file)"
             $arg = args $uninstaller.args
@@ -647,11 +648,11 @@ function failed($app, $global) {
 }
 
 function ensure_none_failed($apps, $global) {
-    foreach($app in $apps) {
+    if ($null -ne $apps) { foreach ($app in $apps) {
         if(failed $app $global) {
             abort "$app install failed previously. please uninstall it and try again."
         }
-    }
+    }}
 }
 
 # travelling directories have their contents moved from
