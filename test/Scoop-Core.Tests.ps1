@@ -1,6 +1,6 @@
-. "$psscriptroot\..\lib\core.ps1"
-. "$psscriptroot\..\lib\install.ps1"
-. "$psscriptroot\Scoop-TestLib.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path)\Scoop-TestLib.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\core.ps1"
+. $(rootrelpath "lib\install.ps1")
 
 $repo_dir = (Get-Item $MyInvocation.MyCommand.Path).directory.parent.FullName
 
@@ -190,4 +190,97 @@ describe 'sanitary_path' {
 
     $valid_path | should be "test.json"
   }
+}
+
+
+# NOTE: the comma operator may be used to block array unrolling by PowerShell
+
+describe "ConfigFrom-JsonPoSH2" {
+    it "ensures the Newtonsoft.Json module is loaded" {
+        $o = convertfrom-jsonPoSH2 'true'
+        get-module 'Newtonsoft.Json' | should be $true
+    }
+
+    it "correctly converts simple cases to objects" {
+        $o = convertfrom-jsonPoSH2 'true'
+        $o.psobject.TypeNames[0] | should be 'System.Boolean'
+        $o | should be $true
+
+        $o = convertfrom-jsonPoSH2 '1'
+        $o.psobject.TypeNames[0] | should match '^System\.Int.*$'
+        $o | should be 1
+
+        $o = ,$(convertfrom-jsonPoSH2 '[]')
+        $o.psobject.TypeNames[0] | should be 'System.Object[]'
+        $o.count | should be 1
+
+        $o = convertfrom-jsonPoSH2 '[1]'
+        $o.psobject.TypeNames[0] | should be 'System.Object[]'
+        $o.count | should be 1
+        $o[0] | should be 1
+
+        $o = convertfrom-jsonPoSH2 '[1,2]'
+        $o.psobject.TypeNames[0] | should be 'System.Object[]'
+        $o.count | should be 2
+        $o[0] | should be 1
+        $o[1] | should be 2
+    }
+}
+
+describe "ConfigFrom-JsonPoSH2 (hash tests/appveyor fails)" -tag:'appveyor.disabled' {
+    it "correctly converts properties to simple hashtables" {
+        $o = convertfrom-jsonPoSH2 '{}'
+        $o.psobject.TypeNames[0] | should be 'System.Collections.Hashtable'
+        $o.count | should be 0
+        $o.keys.count | should be 0
+
+        $o = convertfrom-jsonPoSH2 '{1:2}'
+        $o.psobject.TypeNames[0] | should be 'System.Collections.Hashtable'
+        $o.count | should be 1
+        $o.keys.count | should be 1
+        $o.'1' | should be 2
+    }
+
+    $json = '{ "one": 1, "two": [ { "a": "a" }, "b", 2 ], "three": { "four": 4 } }'
+
+    it "converts json to hashtable" {
+        $ht = ,$(convertfrom-jsonPoSH2 $json)
+
+        $ht.one | should beexactly 1
+        $ht.two[0].a | should be "a"
+        $ht.two[1] | should be "b"
+        $ht.two[2] | should beexactly 2
+        $ht.three.four | should beexactly 4
+    }
+}
+
+describe "ConfigTo-JsonPoSH2" {
+    # NOTE: only simple cases as generated json strings have unordered properties, making matching problematic
+
+    it "correctly converts simple cases to json strings" {
+        convertTo-jsonPoSH2 @() -indentation -1 | should beexactly '[]'
+        convertTo-jsonPoSH2 @{} -indentation -1 | should beexactly '{}'
+        convertTo-jsonPoSH2   1 -indentation -1 | should beexactly '1'
+        convertTo-jsonPoSH2 "a" -indentation -1 | should beexactly '"a"'
+
+        convertTo-jsonPoSH2 @(1)   -indentation -1 | should beexactly '[1]'
+        convertTo-jsonPoSH2 @(1,2) -indentation -1 | should beexactly '[1,2]'
+        convertTo-jsonPoSH2 @{1=2} -indentation -1 | should beexactly '{"1":2}'
+    }
+}
+
+describe "Config*-JsonPoSH2" -tag 'appveyor.disabled' {
+    $json = '{ "one": 1, "two": [ { "a": "a" }, "b", 2 ], "three": { "four": 4 } }'
+
+    it "conversions are reversible" {
+        # NOTE: as written, this test may correctly fail
+        #   ... json properties are unordered and may shift within equivalent json strings
+        #   ... an initial conversion gives a more reliable target for testing equivalency
+        #   ... but *not* guaranteed; a sorted json output would be needed for a guarantee
+
+        $target_json = convertto-jsonPoSH2 $(convertfrom-jsonPoSH2 $json) -indentation -1
+        $original_json = $target_json
+
+        $original_json | convertfrom-jsonPoSH2 | convertTo-jsonPoSH2 -indentation -1 | should beexactly $target_json
+    }
 }

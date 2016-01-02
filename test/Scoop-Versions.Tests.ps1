@@ -1,5 +1,5 @@
-. "$psscriptroot\Scoop-TestLib.ps1"
-. "$psscriptroot\..\lib\versions.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path)\Scoop-TestLib.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\versions.ps1"
 
 describe "versions" {
     it 'compares versions with integer-string mismatch' {

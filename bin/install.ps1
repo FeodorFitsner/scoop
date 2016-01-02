@@ -5,7 +5,7 @@ param(
     )
 
 # remote install:
-# `'https://raw.github.com/rivy/scoop/master/bin/install.ps1' |% & $([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin "$_"`
+# `'https://raw.github.com/rivy/scoop/master/bin/install.ps1' |% & $([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin $_`
 
 $erroractionpreference='stop' # quit if anything goes wrong
 
@@ -13,7 +13,7 @@ $erroractionpreference='stop' # quit if anything goes wrong
 $repo_domain = 'github.com'
 $repo_owner = 'rivy'
 $repo_name = 'scoop'
-$repo_branch = 't-fix'
+$repo_branch = 'master'
 
 # origin templates
 # [BitBucket] https://bitbucket.org/OWNER/NAME/raw/BRANCH/bin/install.ps1

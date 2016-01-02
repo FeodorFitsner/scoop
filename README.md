@@ -1,23 +1,23 @@
-Scoop [![Build status](https://ci.appveyor.com/api/projects/status/jgckhkhe5rdd6586/branch/t-fix?svg=true)](https://ci.appveyor.com/project/rivy/scoop/branch/t-fix)
+Scoop [![Build status](https://ci.appveyor.com/api/projects/status/jgckhkhe5rdd6586/branch/dev-posh-v2?svg=true)](https://ci.appveyor.com/project/rivy/scoop/branch/dev-posh-v2)
 =====
 
 Scoop is a command-line installer for Windows.
 
 Requirements:
 
-* [PowerShell 3](http://www.microsoft.com/en-us/download/details.aspx?id=34595)
+* [PowerShell 2 (or later)](http://www.microsoft.com/en-us/download/details.aspx?id=34595)
 * PowerShell must be enabled for your user account e.g. `set-executionpolicy unrestricted -s cu`
 
 To install (for the CMD shell):
 
     powershell -ex unrestricted -command "set-executionpolicy unrestricted -s currentuser"
-    powershell -command "'https://raw.github.com/rivy/scoop/t-fix/bin/install.ps1' |%{&$([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin $_}"
+    powershell -command "'https://raw.github.com/rivy/scoop/dev-posh-v2/bin/install.ps1' |%{&$([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin $_}"
     set PATH=%PATH%;%LOCALAPPDATA%\scoop\shims
 
 To install (for PowerShell):
 
     set-executionpolicy unrestricted -s cu
-    'https://raw.github.com/rivy/scoop/t-fix/bin/install.ps1' |%{&$([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin $_}
+    'https://raw.github.com/rivy/scoop/dev-posh-v2/bin/install.ps1' |%{&$([ScriptBlock]::create((new-object net.webclient).downloadstring($_))) -origin $_}
 
 Once installed, run `scoop help` for instructions.
 

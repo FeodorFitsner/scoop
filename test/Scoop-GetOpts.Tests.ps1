@@ -1,5 +1,5 @@
-. "$psscriptroot\Scoop-TestLib.ps1"
-. "$psscriptroot\..\lib\getopt.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path)\Scoop-TestLib.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\getopt.ps1"
 
 describe "getopt" {
     it 'handle short option with required argument missing' {

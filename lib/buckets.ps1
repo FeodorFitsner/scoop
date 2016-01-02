@@ -1,7 +1,7 @@
 $bucketsdir = "$scoopdir\buckets"
 
 function bucketdir($name) {
-    if(!$name) { return relpath "..\bucket" } # main bucket
+    if(!$name) { return $(rootrelpath "bucket") } # main bucket
 
     "$bucketsdir\$name"
 }
@@ -9,7 +9,7 @@ function bucketdir($name) {
 function known_bucket_repo($name) {
     $dir = versiondir 'scoop' 'current'
     $json = "$dir\buckets.json"
-    $buckets = get-content $json -raw | convertfrom-json -ea stop
+    $buckets = [System.IO.File]::ReadAllText($(resolve-path $json)) | convertfrom-jsonPoSH2 -ea stop
     $buckets.$name
 }
 

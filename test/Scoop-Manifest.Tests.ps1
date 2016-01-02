@@ -1,9 +1,9 @@
-. "$psscriptroot\Scoop-TestLib.ps1"
-. "$psscriptroot\..\lib\core.ps1"
-. "$psscriptroot\..\lib\manifest.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path)\Scoop-TestLib.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\core.ps1"
+. $(rootrelpath "lib\manifest.ps1")
 
-describe "manifest-validation" {
-    $bucketdir = "$psscriptroot\..\bucket\"
+describe "manifest-validation" -tag:'appveyor.disabled' {
+    $bucketdir = $(rootrelpath "bucket")
     $manifest_files = get-childitem $bucketdir *.json
 
     $manifest_files | foreach-object {

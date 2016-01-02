@@ -1,3 +1,5 @@
+$my_dir = (Get-Item $MyInvocation.MyCommand.Path).directory.FullName
+
 if(!$script:run) { $script:run = 0 }
 if(!$script:failed) { $script:failed = 0 }
 
@@ -66,7 +68,7 @@ function script_fmt($var) {
 
 # copies fixtures to a working directory
 function setup_working($name) {
-    $fixtures = "$psscriptroot\fixtures\$name"
+    $fixtures = "$my_dir\fixtures\$name"
     if(!(test-path $fixtures)) {
         write-host "couldn't find fixtures for $name at $fixtures" -f red
         exit 1

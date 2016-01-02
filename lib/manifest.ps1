@@ -1,4 +1,4 @@
-. "$psscriptroot/core.ps1"
+. "$($MyInvocation.mycommand.path | Split-Path | Split-Path)\lib\core.ps1"
 
 function manifest_path($app, $bucket) {
 
@@ -7,7 +7,7 @@ function manifest_path($app, $bucket) {
 
 function parse_json($path) {
     if(!(test-path $path)) { return $null }
-    get-content $path -raw | convertfrom-json -ea stop
+    [System.IO.File]::ReadAllText($(resolve-path $path)) | convertfrom-jsonPoSH2 -ea stop
 }
 
 function url_manifest($url) {
@@ -20,7 +20,7 @@ function url_manifest($url) {
         throw
     }
     if(!$str) { return $null }
-    $str | convertfrom-json
+    $str | convertfrom-jsonPoSH2
 }
 
 function manifest($app, $bucket, $url) {
@@ -41,7 +41,7 @@ function save_install_info($info, $dir) {
     $nulls = $info.keys | where-object { $null -eq $info[$_] }
     $nulls | foreach-object { $info.remove($_) } # strip null-valued
 
-    $info | convertto-json | out-file "$dir\install.json"
+    $info | convertto-jsonPoSH2 | out-file "$dir\install.json"
 }
 
 function install_info($app, $version, $global) {
