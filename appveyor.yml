@@ -11,4 +11,5 @@ init:
 build: off
 
 test_script:
-  - ps: if($env:failedcount -gt 0) { exit $env:failedcount }
+  - ps: $(get-location).path
+  - ps: "& .\\test.ps1"
