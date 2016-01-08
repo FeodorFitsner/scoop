@@ -3,7 +3,7 @@
 $failed_count = 0
 
 $o = ConvertFrom-JsonPoSH2 '{a:1}'
-$o
+$o.ToString()
 if (-not ($o.'a' -eq 1)) { $failed_count = $failed_count + 1 }
 
 if ($failed_count -gt 0) {
