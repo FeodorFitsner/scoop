@@ -11,5 +11,6 @@ init:
 build: off
 
 test_script:
+  - pd: get-module
   - ps: $(get-location).path
   - ps: "& .\\test.ps1"
