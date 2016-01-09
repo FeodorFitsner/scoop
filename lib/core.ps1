@@ -2,7 +2,7 @@ $scoopdir = $env:SCOOP, "~\appdata\local\scoop" | select-object -first 1
 $globaldir = $env:SCOOP_GLOBAL, "$($env:programdata.tolower())\scoop" | select-object -first 1
 
 $projectrootpath = $null
-if ($MyInvocation.mycommand.Definition) { $projectrootpath = $($MyInvocation.MyCommand.Definition | Split-Path | Split-Path) }
+if ($MyInvocation.mycommand.Definition) { $projectrootpath = (Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Definition)) }
 $projectrootpath
             Write-Host "Project root path: $projectrootpath"
 
