@@ -27,7 +27,7 @@ function ConvertFrom-JsonPoSH2 {
             $modulePath = rootrelpath('vendor\Newtonsoft.Json\lib\net20\Newtonsoft.Json.dll')
 
             Write-Host "before"
-            $modulePath
+            Write-Host "Module path: $modulePath"
             Write-Host "after"
             import-module $modulePath
         }
