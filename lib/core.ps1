@@ -4,6 +4,9 @@ $globaldir = $env:SCOOP_GLOBAL, "$($env:programdata.tolower())\scoop" | select-o
 $projectrootpath = $null
 if ($MyInvocation.mycommand.Definition) { $projectrootpath = $($MyInvocation.MyCommand.Definition | Split-Path | Split-Path) }
 
+            Write-Host "Project root path: $projectrootpath"
+
+
 function rootrelpath($path) { join-path $projectrootpath $path } # relative to project main directory
 
 # # for CLR < 3.0, use "Json.NET" ... see [Json.NET and PowerShell] http://www.one-tab.com/page/qr_U9Z3vTO67fA41CR1nlg @@ https://archive.is/sCncm
@@ -21,7 +24,6 @@ function ConvertFrom-JsonPoSH2 {
         )
     BEGIN {
         if (-not (Get-Module 'Newtonsoft.Json')) {
-            $projectrootpath
             $modulePath = (rootrelpath 'vendor\Newtonsoft.Json\lib\net20\Newtonsoft.Json.dll')
             $modulePath
             import-module $modulePath
