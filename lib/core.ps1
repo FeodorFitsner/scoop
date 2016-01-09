@@ -2,7 +2,7 @@ $scoopdir = $env:SCOOP, "~\appdata\local\scoop" | select-object -first 1
 $globaldir = $env:SCOOP_GLOBAL, "$($env:programdata.tolower())\scoop" | select-object -first 1
 
 $projectrootpath = $null
-if ($MyInvocation.mycommand.Definition) { $projectrootpath = ($MyInvocation.MyCommand.Definition | Split-Path | Split-Path) }
+if ($MyInvocation.mycommand.Definition) { $projectrootpath = $($MyInvocation.MyCommand.Definition | Split-Path | Split-Path) }
 
 function rootrelpath($path) { join-path $projectrootpath $path } # relative to project main directory
 
@@ -21,6 +21,7 @@ function ConvertFrom-JsonPoSH2 {
         )
     BEGIN {
         if (-not (Get-Module 'Newtonsoft.Json')) {
+            $projectrootpath
             $modulePath = (rootrelpath 'vendor\Newtonsoft.Json\lib\net20\Newtonsoft.Json.dll')
             $modulePath
             import-module $modulePath
