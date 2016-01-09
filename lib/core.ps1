@@ -7,7 +7,7 @@ $projectrootpath
             Write-Host "Project root path: $projectrootpath"
 
 
-function rootrelpath($path) { return (join-path $projectrootpath $path) } # relative to project main directory
+function rootrelpath($path) { return (join-path $env:appveyor_build_folder $path) } # relative to project main directory
 
 # # for CLR < 3.0, use "Json.NET" ... see [Json.NET and PowerShell] http://www.one-tab.com/page/qr_U9Z3vTO67fA41CR1nlg @@ https://archive.is/sCncm
 # # ref: http://stackoverflow.com/questions/17601528/read-json-object-in-powershell-2-0
@@ -27,7 +27,7 @@ function ConvertFrom-JsonPoSH2 {
             $modulePath = rootrelpath('vendor\Newtonsoft.Json\lib\net20\Newtonsoft.Json.dll')
 
             Write-Host "before"
-            Write-Host "Module path: $modulePath"
+            $modulePath
             Write-Host "after"
             import-module $modulePath
         }
