@@ -11,7 +11,7 @@ init:
 build: off
 
 install:
-- powershell build.ps1
+- powershell .\build.ps1
 
 test_script:
   - ps: get-module
