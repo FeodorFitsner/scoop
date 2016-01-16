@@ -10,6 +10,10 @@ init:
 
 build: off
 
+install:
+- ps: import-module C:\projects\scoop\vendor\Newtonsoft.Json\lib\net20\Newtonsoft.Json.dll
+- ps: get-module
+
 test_script:
   - ps: get-module
   - ps: $(get-location).path
