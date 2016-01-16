@@ -11,8 +11,7 @@ init:
 build: off
 
 install:
-- ps: import-module C:\projects\scoop\vendor\Newtonsoft.Json\lib\net20\Newtonsoft.Json.dll
-- ps: get-module
+- powershell build.ps1
 
 test_script:
   - ps: get-module
